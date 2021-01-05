@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Icon  } from 'react-native-elements'
 import AntIcon from "react-native-vector-icons/AntDesign";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {url} from './var.js'
+import {url} from '../var.js'
 export default class Home_Employee extends React.Component {
 
     constructor(props)

@@ -1,2 +1,2 @@
-const host = '10.64.41.20';
+const host = '10.64.70.60';
 export const url = "http://"+host+":3000";

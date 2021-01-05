@@ -17,7 +17,9 @@ export default class Forgot_Password extends React.Component {
         super(props)
         this.state = {
             Question:'0',
-            pass:''
+            Answer:'',
+            ID:'',
+            Email:''
         }
     }
 

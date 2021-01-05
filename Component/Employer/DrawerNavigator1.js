@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import {AsyncStorage,StyleSheet,Image,Text,Linking,View, Button} from 'react-native';
 import { createAppContainer ,StackActions, NavigationActions } from 'react-navigation';
-import TopNavigator from './TopNavigator'
-import Temp1 from './Temp1'
+import StackNavigator from '../BottomTab_Employer/StackNavigator'
+import Temp1 from '../Manage/Temp1'
 import { Icon } from 'react-native-elements'
-import CustomSidebarMenu from './CustomSidebarMenu'
+import CustomSidebarMenu from '../CustomSidebarMenu'
 
   const MyDrawerNavigator = createDrawerNavigator({
     Home: {
-      screen: TopNavigator,
+      screen: StackNavigator,
       navigationOptions: {
         drawerLabel: () => null,
         headerShown:false

@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { AsyncStorage, FlatList, TouchableOpacity, View ,Text} from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, View ,Text,TextInput,KeyboardAvoidingView, TouchableWithoutFeedback,Keyboard} from 'react-native';
+import { AntDesign } from '@expo/vector-icons'; 
+import { ScrollView } from 'react-native-gesture-handler';
 import { Icon  } from 'react-native-elements'
-import {url} from './var.js'
 
-export default class Reccommend_Jobs extends React.Component {
+
+export default class Bookmark_Employee extends React.Component {
     constructor(props)
     {
         super(props);
@@ -40,5 +42,4 @@ export default class Reccommend_Jobs extends React.Component {
                 </View>
         );
     }
-
 }    

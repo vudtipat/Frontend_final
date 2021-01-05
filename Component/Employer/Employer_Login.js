@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { TouchableOpacity, View ,Text,TextInput,Alert, AsyncStorage ,Keyboard} from 'react-native';
+import { TouchableOpacity, View ,Text,TextInput,Alert, TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import { StackActions, NavigationActions } from 'react-navigation';
-import {url} from './var.js'
-export default class Employee_Login extends React.Component {
-
+import {url} from '../var'
+export default class Employer_Login extends React.Component {
   constructor(props)
   {
     super(props)
     this.state = {
-      user:'',
-      pass:''
+      user:'vudtipat@gmail.com',
+      pass:'123456',
+      dataUser:{}
     }
     
   }
@@ -22,37 +22,64 @@ export default class Employee_Login extends React.Component {
     this.setState({pass:Text});
   } 
 
-  _setLogin = async () => {
+  _setLogin = async (data) => {
     try {
       await AsyncStorage.setItem(
-        'mode','Employee'
+        'mode','Employer'
       );
       await AsyncStorage.setItem(
         'login','yes'
       );
-      var v1 = await AsyncStorage.getItem('login')
-      var v2 = await AsyncStorage.getItem('mode')
-      console.log( v1+' '+ v2)
+      await AsyncStorage.setItem(
+        'email',data.Email
+      );
+      await AsyncStorage.setItem(
+        'data',JSON.stringify(data)
+      );
+      var v3 = await AsyncStorage.getItem('data');
+      v3 = JSON.parse(v3);
+      console.log(v3)
+      v3 = await AsyncStorage.getItem('email');
+      console.log(v3)
+      this.setState({dataUser:v3})
     } catch (error) {
       // Error saving data
     }
   }
 
   onPress_login = async () => {
-    console.log(url);
-    await fetch(url+'/login_employee?name='+this.state.user+'&pass='+this.state.pass ,{method: 'GET'})
+    if(this.state.user.length != 0 && this.state.pass.length != 0)
+    {
+      await fetch(url+'/login_employer?name='+this.state.user+'&pass='+this.state.pass ,{method: 'GET'})
         .then((response) => response.json())
         .then((json) => {
-          console.log(json);
-          Alert.alert(json.response);
-          this._setLogin();
-          const resetAction = StackActions.reset({
-            index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'Employee' })],
-          });
-          this.props.navigation.dispatch(resetAction);
+          if(json.response == "Pass")
+          {
+            var data = JSON.parse(json.data)
+            this._setLogin(data);
+            const resetAction = StackActions.reset({
+              index: 0,
+              actions: [NavigationActions.navigate({ routeName: 'Employer'})],
+            });
+            this.props.navigation.dispatch(resetAction);
+            Alert.alert("เข้าสู่ระบบสำเร็จ");
+          }
+          else if(json.response == "Not Pass")
+          {
+            Alert.alert("กรุณาตรวจสอบข้อมูล");
+          }
+          else
+          {
+            Alert.alert("ไม่สามารถเข้าสู่ระบบได้ กรุณาลองอีกครั้ง");
+          }
+          
         })
           .catch(err => {console.log(err);});
+    }
+    else
+    {
+      Alert.alert("กรุณากรอกข้อมูล")
+    }
   }
 
     render() {
@@ -68,12 +95,14 @@ export default class Employee_Login extends React.Component {
           <View style={{flex:0.3}}/>  
 
           <View style={{flex:0.6,backgroundColor:'#E7E7E7',flexDirection:'column',alignItems:'center'}}>
-            <Text style={{color:'#000000',fontSize:24,fontWeight:'bold',padding:'5%'}}>Employee Sign In</Text>
+            <Text style={{color:'#000000',fontSize:24,fontWeight:'bold',padding:'5%'}}>Employer Sign In</Text>
             <TextInput style={{height: 40, width:'80%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,paddingHorizontal:10,backgroundColor:'#EBEBEB'}} 
-                placeholder="E-mail" placeholderTextColor='#AAAAAA'/>
+                placeholder="E-mail" placeholderTextColor='#AAAAAA'
+                onChangeText={ Text => this.onChangeuser(Text)} />
 
             <TextInput style={{marginTop:'5%', height: 40, width:'80%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,paddingHorizontal:10,backgroundColor:'#EBEBEB'}} 
-                placeholder="Password" placeholderTextColor='#AAAAAA' secureTextEntry={true}/>
+                placeholder="Password" placeholderTextColor='#AAAAAA' secureTextEntry={true}
+                onChangeText={ Text => this.onChangepass(Text)} />
 
             <TouchableOpacity onPress={() => this.onPress_login()}
                     style={{alignItems:'center',justifyContent:'center',marginTop:'5%',height: 40, width:'80%',borderRadius:10 ,paddingHorizontal:10,backgroundColor:'#720DBA'}}>
@@ -81,13 +110,13 @@ export default class Employee_Login extends React.Component {
             </TouchableOpacity>
 
             <TouchableOpacity style={{alignItems:'flex-end',justifyContent:'center',height: 40, width:'80%',borderRadius:10 ,paddingHorizontal:10}}
-                              onPress={() => this.props.navigation.navigate('Forget_Password')}>
+                              onPress={() => this.props.navigation.navigate('Forget_Password',{mode:'Employer'})}>
               <Text style={{fontSize:12,fontWeight:'bold',color:'#636363'}}>Forgot Password</Text>
             </TouchableOpacity>
             
             <View style={{backgroundColor:'#707070',height:1,width:'100%',marginTop:'10%'}}/>
             <TouchableOpacity style={{marginTop:5,alignItems:'center',justifyContent:'center',height: 40, width:'80%',borderRadius:10 ,paddingHorizontal:10}}
-                              onPress={() => this.props.navigation.navigate('Create_Account')}>
+                              onPress={() => this.props.navigation.navigate('Create_Account',{mode:'Employer'})}>
               <Text style={{fontSize:16,fontWeight:'bold',color:'#636363'}}>Create an account? Register</Text>
             </TouchableOpacity>
           </View>

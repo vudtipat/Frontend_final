@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { Image, StyleSheet, FlatList, TouchableOpacity, View ,Text,TextInput,KeyboardAvoidingView, TouchableWithoutFeedback,Keyboard} from 'react-native';
+import { Image, StyleSheet, FlatList, TouchableOpacity, View ,Text,AsyncStorage,Alert, TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import { ScrollView } from 'react-native-gesture-handler';
-import { Icon  } from 'react-native-elements'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import Interesting_Edit from './Interesting_Edit'
+import { StackActions, NavigationActions } from 'react-navigation';
+export default class Profile_Employee extends React.Component {
 
-const Tab = createBottomTabNavigator();
+    _getData = async() => {
+        var data = await AsyncStorage.getItem('data');
+        data = JSON.parse(data)
+        console.log(data)
+        this.setState({dataUser:data})
+    }
 
-
-export default class Annoucement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,51 +32,68 @@ export default class Annoucement extends React.Component {
             university : 'Stanford University',
             major: 'Mechanical Engineering',
             year: '2021',
+            dataUser:{}
         };
+        this._getData();
+      }
+    
+      componentDidMount() {
+        this._unsubscribe = this.props.navigation.addListener('didFocus', () => {
+            this._getData();
+        });
+      }
+    
+      componentWillUnmount() {
+        this._unsubscribe();
       }
 
     render(){
         return(
-            <View style={{flex:1, marginVertical:40, flexDirection:'column'}}>
-                <View style={{flex:0.05, alignItems:'flex-start', position:'absolute', marginLeft:10}}>
-                    <TouchableOpacity style={{flex:1, backgroundColor:'#0099FF', justifyContent:'center', borderRadius:20,height:25, width:50}}>
-                        <Text style={{fontSize:12, color:'white', alignSelf:'center'}}>Save</Text>
-                    </TouchableOpacity>
-                    
-                </View>
-                
-                <View style={{flex:0.35, backgroundColor:'white', marginTop:25, alignItems:'center'}}>
-                    <View style={{ borderRadius:60}}>
-                        <Image 
-                            style={{width:120, height:120, margin:5, borderRadius:60}}
-                            source={require("./image/person.png")}
-                        />
-                        <TouchableOpacity style={{width:40, height:40, borderRadius:20, position:'absolute',alignSelf:'flex-end', backgroundColor:'#E6E6E6', marginTop:80, justifyContent:'center'}}>
-                            <Image
-                                style={{width:30, height:30, borderRadius:10, position:'absolute', alignSelf:'center'}}
-                                source={require("./image/camera.png")}
-                            />
+            <View style={{flex:1,  flexDirection:'column'}}>
+                <View style={{flex:0.4, backgroundColor:'white',justifyContent:'center'}}>
+                    <View style={{height:'100%',flex:0.1,justifyContent:'center', backgroundColor:'white',alignItems:'flex-start',marginTop:5}}>
+                        <TouchableOpacity style={{height:30,justifyContent:'center',marginLeft:'2%',backgroundColor:'#0099FF',opacity:10,width:'15%',borderRadius:10,flexDirection:'row',alignItems:'center'}}
+                                        onPress={()=>this.props.navigation.goBack()}>
+                            <Text style={{fontSize:12, color:'white', alignSelf:'center'}}>Save</Text>
                         </TouchableOpacity>
                     </View>
-        <Text style={{fontSize:26, margin:5}}> {this.state.firstName}  {this.state.lastName} </Text>
-                    <Text style={{fontSize:18 , margin:5}}> {this.state.email} </Text>
-                    <Text style={{fontSize:14 , margin:5}}> {this.state.tel} </Text>
+                    <View style={{flex: 1,borderRadius:60,alignItems:'center',marginTop:15}}>
+                        <View >
+                            <Image 
+                                style={{width:100, height:100, margin:5, borderRadius:60}}
+                                source={require("../../image/person.png")}
+                            />
+                            <TouchableOpacity style={{width:40, height:40, borderRadius:20,alignSelf:'flex-end',position:'absolute', backgroundColor:'#E6E6E6', marginTop:80, justifyContent:'center'}}>
+                                <Image
+                                    style={{width:30, height:30, borderRadius:10, position:'absolute', alignSelf:'center'}}
+                                    source={require("../../image/camera.png")}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <Text style={{fontSize:26, margin:5}}> {this.state.firstName}  {this.state.lastName} </Text>
+                        <Text style={{fontSize:18 , margin:5}}> {this.state.email} </Text>
+                        <Text style={{fontSize:14 , margin:5}}> {this.state.tel} </Text>
+                    </View>
+                    
+                    
                 </View>
 
 
 
-                <View style={{flex:0.65, marginTop:10}}>
+                <View style={{flex:0.6, marginTop:10}}>
                     <ScrollView>
 
                         {/* Education */}
                         <View style={{ backgroundColor:'white', borderWidth:15, borderColor:'transparent'}}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 <Image
-                                    source={require('./image/book.png')}
+                                    source={require('../../image/book.png')}
                                 />
                                 <Text style={{fontSize:20,}}> Education </Text>
                                 <View style={{flex:1,alignItems:'flex-end'}}>
-                                    <TouchableOpacity style={styles.purpleBtn}>
+                                    <TouchableOpacity style={styles.purpleBtn}
+                                                    onPress={() => this.props.navigation.navigate('Education')}>
                                         <Text style={{fontSize:16, color:'white'}}>  Add  </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -86,10 +106,11 @@ export default class Annoucement extends React.Component {
                                     <Text style={{fontSize:14}}>{this.state.major}</Text>
                                 </View>
                                 <View style={{flex:0.5, justifyContent:'flex-start', alignItems:'flex-end'}}>
-                                    <TouchableOpacity style={{margin:10}}>
+                                    <TouchableOpacity style={{margin:10}}
+                                                    onPress={() => this.props.navigation.navigate('Education_Edit')}>
                                         <Image
                                             style={{height:25, width:25}}
-                                            source={require('./image/pencil.png')}
+                                            source={require('../../image/pencil.png')}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -104,7 +125,7 @@ export default class Annoucement extends React.Component {
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 <Image
                                     style={{height:35, width:35}}
-                                    source={require('./image/share.png')}
+                                    source={require('../../image/share.png')}
                                 />
                                 <Text style={{fontSize:20,}}> Interesting </Text>
                             </View>
@@ -121,10 +142,12 @@ export default class Annoucement extends React.Component {
                                 {/*///////////////////////////////////////////////////////////////////*/}
                                 </View>
                                 <View style={{flex:0.5, justifyContent:'flex-start', alignItems:'flex-end'}}>
-                                    <TouchableOpacity style={{margin:10}}>
+                                    <TouchableOpacity style={{margin:10}}
+                                                        onPress={() => this.props.navigation.navigate('Interesting_Edit')}>
+                                                    
                                         <Image
                                             style={{height:25, width:25}}
-                                            source={require('./image/pencil.png')}
+                                            source={require('../../image/pencil.png')}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -140,11 +163,12 @@ export default class Annoucement extends React.Component {
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 <Image
                                     style={{height:35, width:35}}
-                                    source={require('./image/status.png')}
+                                    source={require('../../image/status.png')}
                                 />
-                                <Text style={{fontSize:20,}}> Interesting </Text>
+                                <Text style={{fontSize:20,}}> Status </Text>
                                 <View style={{flex:1,alignItems:'flex-end'}}>
-                                    <TouchableOpacity style={styles.purpleBtn}>
+                                    <TouchableOpacity style={styles.purpleBtn}
+                                        onPress={() => this.props.navigation.navigate('Status_Edit')}>
                                         <Text style={{fontSize:16, color:'white'}}>  Edit  </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -155,27 +179,27 @@ export default class Annoucement extends React.Component {
                                     
                                     <View style={{flexDirection:'row'}}>
                                         <Text style={{fontSize:16}}>Age : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.age} </Text>
+                                        <Text style={styles.fontStatus}> {this.state.dataUser.age} </Text>
                                     </View> 
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>
                                         <Text style={{fontSize:16}}>Sex :</Text>
-                                        <Text style={styles.fontStatus}> {this.state.sex} </Text>
+                                        <Text style={styles.fontStatus}> {this.state.dataUser.sex} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>
                                         <Text style={{fontSize:16}}>Nationality : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.nation} </Text>
+                                        <Text style={styles.fontStatus}> {this.state.dataUser.nation} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>  
                                         <Text style={{fontSize:16}}>Religion : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.religion} </Text>
+                                        <Text style={styles.fontStatus}> {this.state.dataUser.religion} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>  
                                         <Text style={{fontSize:16}}>Highest Education : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.degree} </Text>
+                                        <Text style={styles.fontStatus}> {this.state.dataUser.degree} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
 
@@ -193,6 +217,7 @@ export default class Annoucement extends React.Component {
         );
     }
 }
+
 const styles = StyleSheet.create({
     statusLine : {
         borderWidth:0.5,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
-import StackNavigator from './Component/StackNavigator.js';
+import StackNavigator from './Component/Manage/StackNavigator'
 export default class App extends React.Component {
   render(){
     return (

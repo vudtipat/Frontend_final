@@ -3,7 +3,7 @@ import { StyleSheet, Picker, TouchableOpacity, View ,Text,TextInput,Alert} from 
 import { AntDesign } from '@expo/vector-icons'; 
 import { ScrollView } from 'react-native-gesture-handler';
 import { CheckBox } from 'react-native-elements'
-import {url} from './var';
+import {url} from '../var';
 const styles = StyleSheet.create({
     item: {
       padding: 10,
@@ -111,32 +111,78 @@ export default class Create_Account extends React.Component {
                         }
                         else
                         {
-                            console.log(this.state)
                             var data = {
-                            "Answer": "ttt",
-                            "Email": "vudtipat@gmail.com",
-                            "ID": "1250800074251",
-                            "Password": "123456",
-                            "Phone": "0961912151",
-                            "Question": "0",
-                            "firstName": "vudtipat",
-                            "lastName": "saichana"
+                            "_id" : this.state.Email,
+                            "Answer": this.state.Answer,
+                            "Email": this.state.Email,
+                            "ID": this.state.ID,
+                            "Password": this.state.Password,
+                            "Phone": this.state.Phone,
+                            "Question": this.state.Question,
+                            "firstName": this.state.firstName,
+                            "lastName": this.state.lastName,
+                            "mode":this.props.navigation.getParam('mode', 'NO-ID'),
+                            "age": '',
+                            "sex": '',
+                            "nation": '',
+                            "religion": '',
+                            "degree": '',
+                            "interest" :['','','',''],
                             };
-                            await fetch(url+'/Employee_Register', {
-                                method: 'POST',
-                                headers: {
-                                    Accept: 'application/json',
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(data)
-                            }).then((response) => response.json())
-                            .then((json) => {
-                                if(json.response == "Pass")
-                                {
-                                    Alert.alert("ลงทะเบียนสำเร็จ!!")
-                                }
-                                console.log(json)
-                            })
+                            console.log(data)
+                            if(data.mode == "Employee")
+                            {
+                                await fetch(url+'/Employee_Register', {
+                                    method: 'POST',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(data)
+                                }).then((response) => response.json())
+                                .then((json) => {
+                                    if(json.response == "Pass")
+                                    {
+                                        Alert.alert("ลงทะเบียนสำเร็จ!!")
+                                        this.props.navigation.navigate('Employee_Login')
+                                    }
+                                    else if(json.response == "Not Pass")
+                                    {
+                                        Alert.alert("กรุณาตรวจสอบข้อมูล")
+                                    }
+                                    else
+                                    {
+                                        Alert.alert("ไม่สามารถลงทะเบียนได้ กรุณาลองใหม่อีกครั้ง")
+                                    }
+                                })
+                            }
+                            else if(data.mode == "Employer")
+                            {
+                                await fetch(url+'/Employer_Register', {
+                                    method: 'POST',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(data)
+                                }).then((response) => response.json())
+                                .then((json) => {
+                                    if(json.response == "Pass")
+                                    {
+                                        Alert.alert("ลงทะเบียนสำเร็จ!!")
+                                        this.props.navigation.navigate('Employer_Login')
+                                    }
+                                    else if(json.response == "Not Pass")
+                                    {
+                                        Alert.alert("กรุณาตรวจสอบข้อมูล")
+                                    }
+                                    else
+                                    {
+                                        Alert.alert("ไม่สามารถลงทะเบียนได้ กรุณาลองใหม่อีกครั้ง")
+                                    }
+                                })
+                            }
+                            
                         }
                         
                     }
@@ -219,10 +265,12 @@ export default class Create_Account extends React.Component {
                             style={{ height: 50, width: '105%' }}
                             onValueChange={(itemValue, itemIndex) => this.onChangeQuesTion(itemValue)}
                         >
-                            <Picker.Item label="สถานที่เกิดของคุณ" value="0" />
-                            <Picker.Item label="เพื่อนสนิทของคุณ" value="1" />
-                            <Picker.Item label="เพลงโปรดในดวงใจคุณ" value="2" />
-                            <Picker.Item label="สถานที่ที่คุณชอบ" value="3" />
+                            <Picker.Item label="ชื่อแม่ของคุณ" value="0" />
+                            <Picker.Item label="ชื่อพ่อของคุณ" value="1" />
+                            <Picker.Item label="ชื่อสัตว์เลี้ยงตัวแรกของคุณ" value="2" />
+                            <Picker.Item label="โรงพยาบาลที่คุณเกิด" value="3" />
+                            <Picker.Item label="หนังที่คุณชอบ" value="4" />
+                            <Picker.Item label="ชื่อคนที่คุณชอบ" value="5" />
                         </Picker>
                         </TouchableOpacity>
                     </View>

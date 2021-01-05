@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import HomePage from './HomePage.js'
-import Employer_Login from './Employer_Login.js'
-import Employee_Login from './Employee_Login.js'
+import HomePage from './HomePage'
+import Employer_Login from '../Employer/Employer_Login'
+import Employee_Login from '../Employee/Employee_Login'
 import Forget_Password from './Forgot_Password'
 import Create_Account from './Create_Account'
-import Temporary from './Temporary.js'
-import Temporary1 from './Temporary1.js'
+import Temporary from '../Employee/Temporary'
+import Temporary1 from '../Employer/Temporary1'
 
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer,createSwitchNavigator  } from 'react-navigation';

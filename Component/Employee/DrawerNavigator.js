@@ -1,22 +1,27 @@
 import * as React from 'react';
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import {AsyncStorage,StyleSheet,Image,Text,Linking,View, Button} from 'react-native';
-import { createAppContainer ,StackActions, NavigationActions } from 'react-navigation';
-import TopNavigator from './TopNavigator'
-import Temp1 from './Temp1'
+import { createAppContainer } from 'react-navigation';
+import StackNavigator from '../BottomTab/StackNavigator'
+import Temp1 from '../Manage/Temp1'
 import { Icon } from 'react-native-elements'
-import CustomSidebarMenu from './CustomSidebarMenu'
+import CustomSidebarMenu from '../CustomSidebarMenu'
+//====================Profile============================
+import Profile_Employee from './Profile/Profile_Employee';
+import Education from './Profile/Education';
+import Education_Edit from './Profile/Education_Edit';
+import Interesting_Edit from './Profile/Interesting_Edit';
+import Status_Edit from './Profile/Status_Edit';
 
   const MyDrawerNavigator = createDrawerNavigator({
     Home: {
-      screen: TopNavigator,
+      screen: StackNavigator,
       navigationOptions: {
         drawerLabel: () => null,
         headerShown:false
       }
     },
     Profile: {
-      screen: Temp1,
+      screen: Profile_Employee,
       navigationOptions: {
         headerShown:false,
         drawerLabel: 'View Profile',
@@ -56,6 +61,15 @@ import CustomSidebarMenu from './CustomSidebarMenu'
           
       },
     },
+    //                     Profile
+    Education:{screen:Education,navigationOptions: {
+    drawerLabel: () => null,headerShown:false}},
+    Education_Edit:{screen:Education_Edit,navigationOptions: {
+    drawerLabel: () => null,headerShown:false}},
+    Interesting_Edit:{screen:Interesting_Edit,navigationOptions: {
+    drawerLabel: () => null,headerShown:false}},
+    Status_Edit:{screen:Status_Edit,navigationOptions: {
+    drawerLabel: () => null,headerShown:false}},
   },
   {
     initialRouteName: "Home",

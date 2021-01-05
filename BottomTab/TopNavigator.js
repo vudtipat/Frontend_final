@@ -1,8 +1,13 @@
 import * as React from 'react';
 
 import Bookmark_Employee from './Bookmark_Employee';
-import Annoucement from './Annoucement';
+
+import Annoucement from './Annoucement/Annoucement';
+import Annoucement_Profile from './Annoucement/Annoucement_Profile';
+import Annoucement_Create from './Annoucement/Annoucement_Create';
+
 import Home_Employee from './Home_Employee';
+
 import Reccommend_Jobs from './Reccommend_Jobs';
 
 import { createStackNavigator } from 'react-navigation-stack';
@@ -28,6 +33,11 @@ const stackPage3 = createStackNavigator({
 
 const stackPage4 = createStackNavigator({
   Page4Screen:{screen:Bookmark_Employee,navigationOptions: {
+    headerShown:false}},
+},);
+
+const stackPage5 = createStackNavigator({
+  Page4Screen:{screen:Annoucement_Profile,navigationOptions: {
     headerShown:false}},
 },);
 
