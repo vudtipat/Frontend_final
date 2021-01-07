@@ -6,7 +6,8 @@ export default class Annoucement extends React.Component {
 
     getAnnouncement = async() => {
         var email = await AsyncStorage.getItem('email')
-        await fetch(url+'/Employee_getAnnoucment?want='+email, {
+        console.log(email)
+        await fetch(url+'/Employee_Annoucment?want='+email, {
             method: 'GET',
         }).then((response) => response.json()).then((respone) => {
             if(respone.response == 'Pass')
@@ -41,8 +42,8 @@ export default class Annoucement extends React.Component {
 
     deleteAnnoucement = async(data) => {
         console.log(data)
-        await fetch(url+'/Employee_deleteAnnoucment?want='+data, {
-            method: 'GET',
+        await fetch(url+'/Employee_Annoucment?want='+data, {
+            method: 'DELETE',
         }).then((response) => response.json()).then((respone) => {
             if(respone.response == 'Pass')
             {

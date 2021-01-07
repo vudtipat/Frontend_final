@@ -18,7 +18,7 @@ export default class Annoucement_Create extends React.Component {
             lastName:datap.lastName,
             owner:datap.Email
         }
-        await fetch(url+'/Employee_CreateAnnoucment', {
+        await fetch(url+'/Employee_Annoucment', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

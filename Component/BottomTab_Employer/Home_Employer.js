@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { AsyncStorage,Alert, FlatList, TouchableOpacity, View ,Keyboard,TextInput,Text} from 'react-native';
-import { StackActions, NavigationActions } from 'react-navigation';
-import { AntDesign } from '@expo/vector-icons'; 
+import { AsyncStorage,Alert, FlatList, TouchableOpacity, View ,Keyboard,TextInput,Text,Image} from 'react-native';
 import { Icon  } from 'react-native-elements'
 import AntIcon from "react-native-vector-icons/AntDesign";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -15,9 +13,32 @@ export default class Home_Employee extends React.Component {
             search:'หางานช่าง',
             datasource: []
         };
+        this.getAnnouncement();
         //this.RedirectAuth();
 
     }
+
+    getAnnouncement = async() => {
+        var email = await AsyncStorage.getItem('email')
+        console.log(email)
+        await fetch(url+'/Employee_Annoucment?want=all', {
+            method: 'GET',
+        }).then((response) => response.json()).then((respone) => {
+            if(respone.response == 'Pass')
+            {
+                var datax = [];
+                var x = JSON.parse(respone.data);
+                this.setState({datasource:x});
+                console.log(this.state.datasource)
+                
+            }
+            else
+            {
+                Alert.alert('กรุณาลองอีกครั้ง!!');
+            }
+        })
+    }
+
 
     RedirectAuth = async () => {
         var value = await AsyncStorage.getItem('login');
@@ -34,21 +55,6 @@ export default class Home_Employee extends React.Component {
           }
           
         }
-      }
-
-    componentDidMount() {
-        this.keyboardDidShowListener = Keyboard.addListener(
-          'keyboardDidShow'
-        );
-        this.keyboardDidHideListener = Keyboard.addListener(
-          'keyboardDidHide'
-
-        );
-      }
-    
-      componentWillUnmount() {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
       }
     
     
@@ -104,13 +110,28 @@ export default class Home_Employee extends React.Component {
                     <FlatList
                         data={this.state.datasource}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({item}) => <View style={{flex:1,marginLeft:'2%',width:'96%',marginBottom:20,backgroundColor:'#720DBA',borderRadius:10}}>
-                                                    <TouchableOpacity style={{width:'100%'}}>
-                                                        <View style={{marginLeft:'5%',marginTop:'5%'}} >
-                                                            <Text style={{color:'white',fontWeight:'bold',fontSize:20}}>{item[0]}</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                    </View>
+                        renderItem={({item}) => 
+                                                    <TouchableOpacity style={{height: 150, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+                                paddingHorizontal:10, backgroundColor:'#6914B3', alignSelf:'center', margin:10}}
+                                onPress={() => this.props.navigation.navigate('Annoucement_Profile')}>
+                                <View style={{flex:1, flexDirection:'row'}}>
+                                    <View style={{ justifyContent:'center'}}>
+                                        <View style={{ borderRadius:60 }}>
+                                            <Image 
+                                                style={{width:70, height:70, borderRadius:60}}
+                                                source={require("../image/person.png")}
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View style={{felx:1, margin:5 , marginTop:15}}>
+                                        <Text style={{fontSize:20,marginLeft:15, color:'white', margin:1,fontWeight:'bold'}}>{item.job}</Text>
+                                        <Text style={{fontSize:18,marginLeft:15, color:'white', margin:1}}>{item.firstName} {item.lastName}</Text>
+                                        <Text style={{fontSize:16,marginLeft:15, color:'white', margin:1}}>อายุ  : {item.age}</Text>
+                                    </View>
+                                </View>
+                        </TouchableOpacity>
+
                             }
                         style={{marginTop:5,flex:1}}
                     />

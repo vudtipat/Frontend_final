@@ -1,21 +1,40 @@
 import * as React from 'react';
-import { AsyncStorage,Alert, FlatList, TouchableOpacity, View ,Keyboard,TextInput,Text} from 'react-native';
-import { StackActions, NavigationActions } from 'react-navigation';
-import { AntDesign } from '@expo/vector-icons'; 
+import { AsyncStorage,Alert, FlatList, TouchableOpacity, View ,Keyboard,TextInput,Text,Image} from 'react-native';
 import { Icon  } from 'react-native-elements'
 import AntIcon from "react-native-vector-icons/AntDesign";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {url} from '../var.js'
 export default class Home_Employee extends React.Component {
 
+    getAnnouncement = async() => {
+        var email = await AsyncStorage.getItem('email')
+        await fetch(url+'/Employer_Annoucment?want=all', {
+            method: 'GET',
+        }).then((response) => response.json()).then((respone) => {
+            if(respone.response == 'Pass')
+            {
+                var datax = [];
+                var x = JSON.parse(respone.data);
+                x.forEach(element => {
+                    datax.push(element);
+                });
+                this.setState({datarender:datax});
+            }
+            else
+            {
+                Alert.alert('กรุณาลองอีกครั้ง!!');
+            }
+        })
+    }
+
     constructor(props)
     {
         super(props);
         this.state = {
             search:'หางานช่าง',
-            datasource: []
+            datarender: []
         };
-        //this.RedirectAuth();
+        this.getAnnouncement();
 
     }
 
@@ -102,15 +121,34 @@ export default class Home_Employee extends React.Component {
 
                 <View style={{flex:1,marginTop:'23%'}}>
                     <FlatList
-                        data={this.state.datasource}
+                        data={this.state.datarender}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({item}) => <View style={{flex:1,marginLeft:'2%',width:'96%',marginBottom:20,backgroundColor:'#720DBA',borderRadius:10}}>
-                                                    <TouchableOpacity style={{width:'100%'}}>
-                                                        <View style={{marginLeft:'5%',marginTop:'5%'}} >
-                                                            <Text style={{color:'white',fontWeight:'bold',fontSize:20}}>{item[0]}</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                    </View>
+                        renderItem={({item}) => <TouchableOpacity style={{height: 150, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+                        paddingHorizontal:10, backgroundColor:'#6914B3', alignSelf:'center', margin:10}}
+                        onPress={() => this.props.navigation.navigate('Annoucement_Profile')}>
+                        <View style={{flexDirection:'row',marginTop:10}}>
+                            <Text style={{fontSize:18, color:'white', margin:1}}>{item.position}</Text>
+                            
+                        </View>
+                        
+                        <View style={{flex:1, flexDirection:'row'}}>
+                            <View style={{ justifyContent:'center'}}>
+                                <View style={{ borderRadius:60 }}>
+                                    <Image 
+                                        style={{width:140, height:80}}
+                                        source={require("../image/person.png")}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={{felx:1, margin:5 ,marginLeft:20,marginTop:10}}>
+                                <Text style={{fontSize:16, color:'white', margin:1}}>ประสบการณ์ : {item.workingAge}</Text>
+                                <Text style={{fontSize:16, color:'white', margin:1}}>พื้นที่ : {item.location}</Text>
+                                <Text style={{fontSize:16, color:'white', margin:1}}>ค่าตอบแทน : {item.Compensation}</Text>
+                            </View>
+                            
+                        </View>
+                </TouchableOpacity>
                             }
                         style={{marginTop:5,flex:1}}
                     />

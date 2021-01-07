@@ -26,6 +26,15 @@ export default class HomePage extends React.Component {
           });
           this.props.navigation.dispatch(resetAction);
         }
+        if(mode == 'Employer')
+        {
+          const resetAction = StackActions.reset({
+            index: 0,
+            key: null,
+            actions: [NavigationActions.navigate({ routeName: 'Employer' })],
+          });
+          this.props.navigation.dispatch(resetAction);
+        }
         
       }
     }

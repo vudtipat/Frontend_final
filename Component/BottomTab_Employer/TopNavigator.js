@@ -5,7 +5,7 @@ import Bookmark_Employee from './Bookmark_Employee';
 import Annoucement from './Annoucement/Annoucement';
 
 
-import Home_Employee from './Home_Employee';
+import Home_Employer from './Home_Employer';
 import Reccommend_Jobs from './Reccommend_Jobs';
 
 import { createStackNavigator } from 'react-navigation-stack';
@@ -15,7 +15,7 @@ import AntIcon from "react-native-vector-icons/AntDesign";
 import { FontAwesome,Feather } from '@expo/vector-icons'; 
 
 const stackPage1 = createStackNavigator({
-  Page1Screen:{screen:Home_Employee,navigationOptions: {
+  Page1Screen:{screen:Home_Employer,navigationOptions: {
   headerShown:false}},
 });
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View ,Text,TextInput,Alert, TouchableWithoutFeedback,Keyboard} from 'react-native';
+import { TouchableOpacity, View ,Text,TextInput,Alert, AsyncStorage,Keyboard} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import { StackActions, NavigationActions } from 'react-navigation';
 import {url} from '../var'
