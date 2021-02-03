@@ -32,7 +32,8 @@ export default class Home_Employee extends React.Component {
         super(props);
         this.state = {
             search:'หางานช่าง',
-            datarender: []
+            datarender: [],
+            status:true
         };
         this.getAnnouncement();
 
@@ -77,22 +78,41 @@ export default class Home_Employee extends React.Component {
 
     onSearch = async () =>{
         console.log(this.state.search);
-        await fetch(url+'/search_job?search='+this.state.search,{method: 'GET'})
+        if(this.state.search == '')
+        {
+            this.getAnnouncement();
+        }
+        else
+        {
+            await fetch(url+'/search_job?search='+this.state.search,{method: 'GET'})
         .then((response) => response.json())
         .then((json) => {
-         
-          var obj = [];
-          for (let userObject of json.response) {
-            obj.push(userObject);
+          //console.log(JSON.parse(json.response))
+          console.log(json.response)
+          if(json.response == 'find')
+          {
+            var j = JSON.parse(json.data);
+            var obj = [];
+            for (let userObject of j) {
+                obj.push(userObject);
+            }
+            this.setState({datarender:obj});
+            //console.log(this.state.datarender)
+            this.setState({status:true})
           }
-          this.setState({datasource:obj});
-          console.log(this.state.datasource)
+          else
+          {
+            this.setState({status:false})
+          }
+          
         })
           .catch(err => {
               console.log(err);
               Alert.alert('กรุณาลองอีกครั้ง');
         });
+        }
     }
+    
     render(){
         return(
             <View style={{flex:1,width:'100%',marginTop:10}}>
@@ -123,7 +143,10 @@ export default class Home_Employee extends React.Component {
                     <FlatList
                         data={this.state.datarender}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({item}) => <TouchableOpacity style={{height: 150, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+                        renderItem={({item}) => 
+                        this.state.status == true ?
+                        (
+                            <TouchableOpacity style={{height: 150, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
                         paddingHorizontal:10, backgroundColor:'#6914B3', alignSelf:'center', margin:10}}
                         onPress={() => this.props.navigation.navigate('Annoucement_Profile')}>
                         <View style={{flexDirection:'row',marginTop:10}}>
@@ -148,8 +171,11 @@ export default class Home_Employee extends React.Component {
                             </View>
                             
                         </View>
-                </TouchableOpacity>
-                            }
+                        </TouchableOpacity>
+                        ):
+                        <View>
+                        </View>
+                    }
                         style={{marginTop:5,flex:1}}
                     />
                     </View>
