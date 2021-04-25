@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, Picker, TouchableOpacity, View ,Text,TextInput,Alert} from 'react-native';
+import { StyleSheet, TouchableOpacity, View ,Text,TextInput,Alert} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import { ScrollView } from 'react-native-gesture-handler';
 import { CheckBox } from 'react-native-elements'
 import {url} from '../var';
+import {Picker} from '@react-native-picker/picker';
+import {image} from '../imageurl'
+
 const styles = StyleSheet.create({
     item: {
       padding: 10,
@@ -20,15 +23,15 @@ export default class Create_Account extends React.Component {
         this.state = {
             Question:'0',
             checked:false,
-            firstName:'vudtipat',
-            lastName:'saichana',
-            ID:'1250800074251',
-            Phone:'0961912151',
-            Email:'vudtipat@gmail.com',
-            ConfirmEmail:'vudtipat@gmail.com',
-            Password:'123456',
-            ConfirmPass:'123456',
-            Answer:'ttt'
+            firstName:'Pongpon',
+            lastName:'Cheeraboon',
+            ID:'1209701868672',
+            Phone:'0999493360',
+            Email:'pongponcrb@gmail.com',
+            ConfirmEmail:'pongponcrb@gmail.com',
+            Password:'pp040342',
+            ConfirmPass:'pp040342',
+            Answer:'555',
         }
     }
 
@@ -121,17 +124,37 @@ export default class Create_Account extends React.Component {
                             "Question": this.state.Question,
                             "firstName": this.state.firstName,
                             "lastName": this.state.lastName,
-                            "mode":this.props.navigation.getParam('mode', 'NO-ID'),
-                            "age": '',
-                            "sex": '',
-                            "nation": '',
-                            "religion": '',
-                            "degree": '',
+                            "mode": this.props.navigation.getParam('mode', 'NO-ID'),
+                            "age": 'อายุ',
+                            "sex": 'เพศ',
+                            "nation": 'เชื้อชาติ',
+                            "religion": 'ศาสนา',
+                            "degree": 'ระดับการศึกษา',
                             "interest" :['','','',''],
+                            "information": '-',
+                            "contact":'-',
+                            "companyName":'',
+                            "hiringList":[],
+                            "rating":'0',
+                            "countJob":'0',
+                            "university":'มหาวิทยาลัย',
+                            "major":'คณะ/สาขา',
+                            "year":'-',
+                            "grade":'-',
+                            "experience":'',
+                            "location":'-',
+                            "Compensation":'',
+                            "image":image,
+                            "bookmark":[],
+                            "Currenting":[],
+                            "allApply":[],
+                            "allRate":[],
+                            "EmployeeOfJob":[],
                             };
                             console.log(data)
                             if(data.mode == "Employee")
                             {
+                                console.log('in employee')
                                 await fetch(url+'/Employee_Register', {
                                     method: 'POST',
                                     headers: {
@@ -158,6 +181,7 @@ export default class Create_Account extends React.Component {
                             }
                             else if(data.mode == "Employer")
                             {
+                                console.log('in employer')
                                 await fetch(url+'/Employer_Register', {
                                     method: 'POST',
                                     headers: {
@@ -194,7 +218,7 @@ export default class Create_Account extends React.Component {
     render(){
         return(
             <ScrollView>
-            <View style={{flex:1, backgroundColor:'#ffffff'}}>
+            <View style={{flex:1, backgroundColor:'transparent', marginTop:30}}>
                 <View style={{flex:0.12, borderBottomColor: 'black', borderBottomWidth: 1, flexDirection:'row',
                              alignItems:'center',  backgroundColor:'transparent', marginBottom:20, height:80}}>
                     <TouchableOpacity style={{flex:0.1, height:'100%',justifyContent:'center',marginLeft:'2%',backgroundColor:'transparent',
@@ -203,7 +227,7 @@ export default class Create_Account extends React.Component {
                         <AntDesign name="left" size={26} color="black" style={{marginLeft:'5%',marginRight:'10%'}}/>
                     </TouchableOpacity> 
 
-                    <View style={{flex:0.85, justifyContent:'center', backgroundColor:'transparent', alignItems:'center'}}>
+                    <View style={{flex:0.8, justifyContent:'center', backgroundColor:'transparent', alignItems:'center'}}>
                         <Text style={{fontSize:24, color:'#720DBA', backgroundColor:'transparent'}}>Register</Text>
                     </View>
                 </View>
@@ -256,28 +280,31 @@ export default class Create_Account extends React.Component {
                                     onChangeText={ Text => this.onChangeConfirmPass(Text)} />
                     </View>
 
-                    <View style={{height:50, width: '90%', backgroundColor:'transparent', margin:10}}>
-                        <TouchableOpacity style={{height: 50, width:'100%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
-                                paddingHorizontal:10, backgroundColor:'#EBEBEB', margin:0}}>
-                        <Picker
-                            
-                            selectedValue={this.state.Question}
-                            style={{ height: 50, width: '105%' }}
-                            onValueChange={(itemValue, itemIndex) => this.onChangeQuesTion(itemValue)}
-                        >
-                            <Picker.Item label="ชื่อแม่ของคุณ" value="0" />
-                            <Picker.Item label="ชื่อพ่อของคุณ" value="1" />
-                            <Picker.Item label="ชื่อสัตว์เลี้ยงตัวแรกของคุณ" value="2" />
-                            <Picker.Item label="โรงพยาบาลที่คุณเกิด" value="3" />
-                            <Picker.Item label="หนังที่คุณชอบ" value="4" />
-                            <Picker.Item label="ชื่อคนที่คุณชอบ" value="5" />
-                        </Picker>
-                        </TouchableOpacity>
+                    <View style={{height: 50, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+                                paddingHorizontal:10, backgroundColor:'#EBEBEB', margin:10, justifyContent:'center'}}>
+                            <Picker
+                                selectedValue={this.state.Question}
+                                
+                                style={{height: 50, width:'100%'}}
+                                onValueChange={(itemValue, itemIndex) =>
+                                    this.onChangeQuesTion(itemValue)
+                                }>
+                                <Picker.Item label="สถานที่ที่คุณชอบ" value="สถานที่ที่คุณชอบ" />
+                                <Picker.Item label="โรงพยาบาลที่คุณเกิด" value="โรงพยาบาลที่คุณเกิด" />
+                                <Picker.Item label="โรงเรียนที่มัธยมของคุณ" value="โรงเรียนที่มัธยมของคุณ" />
+                                <Picker.Item label="ชื่อสัตว์เลี้ยงของคุณ" value="ชื่อสัตว์เลี้ยงของคุณ" />
+                                <Picker.Item label="ชื่อแฟนที่ทิ้งคุณคนล่าสุด" value="ชื่อแฟนที่ทิ้งคุณคนล่าสุด" />
+                                <Picker.Item label="ชื่ออาจารย์ที่ให้ F คุณ" value="ชื่ออาจารย์ที่ให้ F คุณ" />
+                                <Picker.Item label="วิชาที่คุณดรอปเป็นตัวแรก" value="วิชาที่คุณดรอปเป็นตัวแรก" />
+                                <Picker.Item label="เพลงที่ฟังแล้วคิดถึงแฟนเก่า" value="เพลงที่ฟังแล้วคิดถึงแฟนเก่า" />
+                                <Picker.Item label="ร้องเพลงท่อนที่คุณชอบี่สุด" value="ร้องเพลงท่อนที่คุณชอบี่สุด" />
+                                <Picker.Item label="ชื่อเพื่อนที่คู่โปรเจคกับคุณ" value="ชื่อเพื่อนที่คู่โปรเจคกับคุณ" />
+                            </Picker>
                     </View>
 
                     <TextInput style={{height: 50, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
                                 paddingHorizontal:10, backgroundColor:'#EBEBEB', margin:10}}
-                                placeholder="Your Answer?" placeholderTextColor='#AAAAAA' 
+                                placeholder="Your Answer" placeholderTextColor='#AAAAAA' 
                                 onChangeText={ Text => this.onChangeAnswer(Text)} />
                     
 
@@ -301,7 +328,8 @@ export default class Create_Account extends React.Component {
                                 paddingHorizontal:10, backgroundColor:'#720DBA', margin:10, flexDirection:'column', justifyContent:'center'}}>
                         <Text style={{fontSize:20, color:'white',alignSelf:'center', backgroundColor:'transparent'}}>Register</Text>
                 </TouchableOpacity>
-
+                
+                <View style={{flex:0.1,height:50}}/>
             </View>
             </ScrollView>
         );

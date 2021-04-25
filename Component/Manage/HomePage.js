@@ -8,9 +8,15 @@ export default class HomePage extends React.Component {
     {
       super(props)
       this.RedirectAuth();
+      this.setUpdate()
     }
 
-    
+    setUpdate = async() => {
+      await AsyncStorage.setItem(
+          'press','0'
+      );
+    }
+
     RedirectAuth = async () => {
       var value = await AsyncStorage.getItem('login');
       var mode = await AsyncStorage.getItem('mode');

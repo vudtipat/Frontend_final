@@ -64,7 +64,7 @@ export default class Annoucement extends React.Component {
       }
     render(){
         return(
-            <View style={{flex:1,width:'100%',marginTop:10}}>
+            <View style={{flex:1,width:'100%',marginTop:37}}>
                 <View style={{flex:0.05, backgroundColor:'transparent', flexDirection:'row'}}>
                     <TouchableOpacity style={{flex:0.15, backgroundColor:'transparent', justifyContent:'center', height:35, width:35}} onPress={() => this.props.navigation.toggleDrawer()}>
                         <Icon name='menu' />
@@ -72,13 +72,13 @@ export default class Annoucement extends React.Component {
                     
                 </View>
 
-                <View style={{flex:1,marginTop:5}}>
+                <View style={{flex:1}}>
                     <FlatList
                         data={this.state.datarender}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item}) => item.job == 'add' ?
-                                                <TouchableOpacity style={{height: 150, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
-                                                    paddingHorizontal:10, backgroundColor:'#B794F0', alignSelf:'center', margin:10}}
+                                                <TouchableOpacity style={{height:150 ,width:'95%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+                                                    paddingHorizontal:10, backgroundColor:'#B794F0', alignSelf:'center', marginTop:10}}
                                                     onPress={() => this.props.navigation.navigate('Job_Annoucement_Create')}>
                                                     <View style={{flex:1,justifyContent:'center', backgroundColor:'transparent', alignItems:'center'}}>
                                                         <Icon name='add' 
@@ -88,43 +88,47 @@ export default class Annoucement extends React.Component {
                                                     </View>
                                                 </TouchableOpacity>
                                                 :
-                                                <TouchableOpacity style={{height: 150, width:'90%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
-                                paddingHorizontal:10, backgroundColor:'#6914B3', alignSelf:'center', margin:10}}
-                                onPress={() => this.props.navigation.navigate('Annoucement_Profile')}>
-                                <View style={{flexDirection:'row',marginTop:10}}>
-                                    <Text style={{fontSize:18, color:'white', margin:1}}>{item.position}</Text>
-                                    <View style={{flex:1,margin:5}}>
-                                            <TouchableOpacity style={{alignSelf:'flex-end'}} onPress={()=>this.deleteAnnoucement(item._id)}>
-                                                <Image 
-                                                    style={{ width:20, height:20, borderRadius:20}}
-                                                    source={require("../../image/trash.png")}
-                                                />
-                                            </TouchableOpacity>
+                                                <TouchableOpacity style={{width:'95%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+                                                                        paddingHorizontal:10, backgroundColor:'#6914B3', alignSelf:'center', marginTop:10}}
+                                                                        onPress={() => this.props.navigation.navigate('Job_Description',{objId : item._id})}>
+                                
+                                <View style={{flexDirection:'row'}}>
+                                    <View style={{flex:1,justifyContent:'center', marginTop:10, backgroundColor:'transparent', marginLeft:15}}>
+                                        <Text style={{fontSize:26, color:'white'}}>{item.position}</Text>
+                                    </View>
+                                    
+
+                                    <View style={{marginTop:5, alignItems:'flex-end', backgroundColor:'transparent'}}>
+                                        <TouchableOpacity style={{alignSelf:'flex-end'}}
+                                            onPress={()=>this.deleteAnnoucement(item._id)}>
+                                            <Image 
+                                                style={{ width:20, height:20, borderRadius:20}}
+                                                source={require("../../image/trash.png")}
+                                            />
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity style={{alignSelf:'flex-end', marginTop:10}}
+                                                          onPress={() => this.props.navigation.navigate('Job_Annoucement_Edit',{objId : item._id})}>
+                                            <Image 
+                                                style={{ width:20, height:20, borderRadius:20}}
+                                                source={require("../../image/pencil.png")}
+                                            />
+                                        </TouchableOpacity>
 
                                     </View>
                                 </View>
                                 
-                                <View style={{flex:1, flexDirection:'row'}}>
-                                    <View style={{ justifyContent:'center'}}>
-                                        <View style={{ borderRadius:60 }}>
-                                            <Image 
-                                                style={{width:140, height:80}}
-                                                source={require("../../image/person.png")}
-                                            />
-                                        </View>
-                                    </View>
-
-                                    <View style={{felx:1, margin:5 ,marginLeft:20,marginTop:10}}>
-                                        <Text style={{fontSize:16, color:'white', margin:1}}>ประสบการณ์ : {item.workingAge}</Text>
-                                        <Text style={{fontSize:16, color:'white', margin:1}}>พื้นที่ : {item.location}</Text>
-                                        <Text style={{fontSize:16, color:'white', margin:1}}>ค่าตอบแทน : {item.Compensation}</Text>
+                                <View style={{flex:1, flexDirection:'row', margin:5, backgroundColor:'transparent'}}>
+                                    <View style={{marginLeft:10, width:'70%',marginBottom:10,}}>
+                                        <Text style={{fontSize:14, color:'white', margin:1}}>ประสบการณ์ : {item.experience}</Text>
+                                        <Text style={{fontSize:14, color:'white', margin:1}}>พื้นที่ : {item.location}</Text>
+                                        <Text style={{fontSize:14, color:'white', margin:1}}>ค่าตอบแทน : {item.Compensation}</Text>
+                                        <Text style={{fontSize:14, color:'white', margin:1}}>ประเภทงาน : {item.jobType}</Text>
                                     </View>
                                     
                                 </View>
                         </TouchableOpacity>
-                            }
-                        style={{marginTop:5,flex:1}}
-                    />
+                    }style={{marginTop:5,flex:1}}/>
                     </View>
                 </View>
                

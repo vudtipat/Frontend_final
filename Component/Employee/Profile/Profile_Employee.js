@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { Image, StyleSheet, FlatList, TouchableOpacity, View ,Text,AsyncStorage,Alert, TouchableWithoutFeedback,Keyboard} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
+import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
-import Interesting_Edit from './Interesting_Edit'
-import { StackActions, NavigationActions } from 'react-navigation';
-export default class Profile_Employee extends React.Component {
+import {url} from '../../var.js'
+import {image} from '../../imageurl'
+import { withNavigation } from 'react-navigation';
+
+
+class Profile_Employee extends React.Component {
 
     _getData = async() => {
         var data = await AsyncStorage.getItem('data');
@@ -16,75 +20,169 @@ export default class Profile_Employee extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'email@example.com',
-            tel: '+66 0999493360',
-            firstName: 'FirstName',
-            lastName: 'LastName',
-            age: '25',
-            sex: 'Male',
-            nation: 'Thailand',
-            religion: 'Buddhist',
-            degree: 'Bachelor Degree',
-            interest :[{1:'ช่างยนต์/ช่างกลโรงงาน'},
-                        {2:'ช่างซ่อมบำรุง'},
-                        {3:'ช่างอิเล็กทรอนิกส'},
-                        {4:'ช่างเทคนิค'}],
-            university : 'Stanford University',
-            major: 'Mechanical Engineering',
-            year: '2021',
-            dataUser:{}
+            re:false,
+            email: '',
+            tel: '',
+            firstName: '',
+            lastName: '',
+            age: '',
+            sex: '',
+            nation: '',
+            religion: '',
+            degree: '',
+            interest :[],
+            university : '',
+            major: '',
+            year: '',
+            grade:'',
+            experience:'',
+            location:'',
+            Compensation:'',
+            degree:'',
+            interestTemp:[],
+            temp:[],
+            img:image,
         };
-        this._getData();
+        //this._getData();
+        this.getAnnouncement()
       }
-    
+
       componentDidMount() {
-        this._unsubscribe = this.props.navigation.addListener('didFocus', () => {
-            this._getData();
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener('didFocus', () => {
+            this.setState({re:!this.state.re})
+            this.getAnnouncement()
         });
       }
     
       componentWillUnmount() {
-        this._unsubscribe();
+        // Remove the event listener
+        this.focusListener.remove();
+      }
+    
+      openImagePickerAsync = async () => {
+        let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+    
+        if (permissionResult.granted === false) {
+          alert('Permission to access camera roll is required!');
+          return;
+        }
+        else{
+          let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:true,allowsEditing: true,
+            aspect: [4,3]});
+          if(!pickerResult.cancelled)
+          {
+            let imageUri = pickerResult ? `data:image/jpg;base64,${pickerResult.base64}` : null;
+            this.setState({img:imageUri})
+            var data = {
+                email:this.state.email,
+                image:imageUri,
+            }
+            fetch(url+'/Employee_Image', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then((response) => response.json())
+            .then((json) => {
+                if(json.response != "Pass")
+                {
+                  console.log("pass")
+                  
+                }
+            })
+          }
+        } 
       }
 
-    render(){
+      getAnnouncement = async() => {
+        var email = await AsyncStorage.getItem('email')
+        this.setState({interest:[]})
+        this.setState({interestTemp:[]})
+        this.setState({temp:[]})
+        console.log(email)
+        console.log('mail sed la')
+        await fetch(url+'/Employee_Profile?want='+email, {
+            method: 'GET',
+        }).then((response) => response.json()).then((respone) => {
+            if(respone.response == 'Pass')
+            {
+                console.log('inside if')
+                var datax = [];
+                var x = JSON.parse(respone.data);
+                this.setState({datasource:x});
+                console.log(this.state.datasource)
+                this.setState({ firstName: x[0]['firstName'], lastName: x[0]['lastName'], tel: x[0]['Phone'] , email: x[0]['Email'], age:x[0]['age'], sex:x[0]['sex'],
+                                nation: x[0]['nation'], religion:x[0]['religion'], degree:x[0]['degree'], year:x[0]['year'], grade:x[0]['grade'], experience:x[0]['experience'],
+                                location:x[0]['location'], Compensation:x[0]['Compensation'], university:x[0]['university'], major:x[0]['major'], degree:x[0]['degree'],
+                                interestTemp:x[0]['interest'], img:x[0]['image']
+                });
+                console.log(this.state.interestTemp)
+                var count = 1;
+                this.state.interestTemp.forEach(element => {
+                    this.state.temp.push({ list:element, num:count})
+                    count++
+                });
+                this.setState({interestTemp:this.state.temp})
+                console.log('temp = '+ this.state.temp)
+                console.log(this.state.temp)
+                console.log(this.state.interest)
+
+            }
+            else
+            {
+                console.log('inside else')
+                Alert.alert('กรุณาลองอีกครั้ง!!');
+            }
+        })
+    }
+
+      render(){
         return(
-            <View style={{flex:1,  flexDirection:'column'}}>
-                <View style={{flex:0.4, backgroundColor:'white',justifyContent:'center'}}>
-                    <View style={{height:'100%',flex:0.1,justifyContent:'center', backgroundColor:'white',alignItems:'flex-start',marginTop:5}}>
-                        <TouchableOpacity style={{height:30,justifyContent:'center',marginLeft:'2%',backgroundColor:'#0099FF',opacity:10,width:'15%',borderRadius:10,flexDirection:'row',alignItems:'center'}}
+            <View style={{flex:1, flexDirection:'column'}}>
+
+                <View style={{flex:0.05, alignItems:'flex-start', backgroundColor:'white', flexDirection:'row'}}>
+                    <View style={{flex:0.2}}>
+                        <TouchableOpacity style={{flex:1,justifyContent:'center',marginLeft:'2%',backgroundColor:'transparent',
+                                        width:'50%',height:'50%',borderRadius:10,flexDirection:'row',alignItems:'center'}} 
                                         onPress={()=>this.props.navigation.goBack()}>
-                            <Text style={{fontSize:12, color:'white', alignSelf:'center'}}>Save</Text>
-                        </TouchableOpacity>
+                            <AntDesign name="left" size={26} color="black" style={{marginLeft:'5%',marginRight:'10%'}}/>
+                        </TouchableOpacity> 
                     </View>
-                    <View style={{flex: 1,borderRadius:60,alignItems:'center',marginTop:15}}>
-                        <View >
-                            <Image 
-                                style={{width:100, height:100, margin:5, borderRadius:60}}
-                                source={require("../../image/person.png")}
+
+                    <View style={{flex:0.7}}/>
+
+                </View>
+                
+                <View style={{flex:0.3, backgroundColor:'white', alignItems:'center'}}>
+                    <View style={{ borderRadius:60}}>
+                        <Image 
+                            style={{width:140, height:140, margin:5, borderRadius:75}}
+                            source={{
+                                uri: this.state.img,
+                              }}
+                        />
+                        <TouchableOpacity style={{width:40, height:40, borderRadius:20, position:'absolute',alignSelf:'flex-end', 
+                                        backgroundColor:'#E6E6E6', marginTop:100, justifyContent:'center'}}
+                                        onPress={() => this.openImagePickerAsync()}>
+                            <Image
+                                style={{width:30, height:30, borderRadius:10, position:'absolute', alignSelf:'center'}}
+                                source={require("../../image/camera.png")}
                             />
-                            <TouchableOpacity style={{width:40, height:40, borderRadius:20,alignSelf:'flex-end',position:'absolute', backgroundColor:'#E6E6E6', marginTop:80, justifyContent:'center'}}>
-                                <Image
-                                    style={{width:30, height:30, borderRadius:10, position:'absolute', alignSelf:'center'}}
-                                    source={require("../../image/camera.png")}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        
-                        <Text style={{fontSize:26, margin:5}}> {this.state.firstName}  {this.state.lastName} </Text>
-                        <Text style={{fontSize:18 , margin:5}}> {this.state.email} </Text>
-                        <Text style={{fontSize:14 , margin:5}}> {this.state.tel} </Text>
-                    </View>
-                    
-                    
+                        </TouchableOpacity>
+                </View>
+                <Text style={{fontSize:22, margin:0}}> {this.state.firstName}  {this.state.lastName} </Text>
+                    <Text style={{fontSize:16 , margin:2}}> {this.state.email} </Text>
+                    <Text style={{fontSize:14 , margin:2}}> {this.state.tel} </Text>
                 </View>
 
 
 
-                <View style={{flex:0.6, marginTop:10}}>
+                <View style={{flex:0.65, marginTop:10}}>
                     <ScrollView>
 
-                        {/* Education */}
                         <View style={{ backgroundColor:'white', borderWidth:15, borderColor:'transparent'}}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 <Image
@@ -92,20 +190,19 @@ export default class Profile_Employee extends React.Component {
                                 />
                                 <Text style={{fontSize:20,}}> Education </Text>
                                 <View style={{flex:1,alignItems:'flex-end'}}>
-                                    <TouchableOpacity style={styles.purpleBtn}
-                                                    onPress={() => this.props.navigation.navigate('Education')}>
-                                        <Text style={{fontSize:16, color:'white'}}>  Add  </Text>
-                                    </TouchableOpacity>
+
                                 </View>
                             </View>
                             <View style={styles.spaceView}/>
                             <View style={{flexDirection:'row'}}>
-                                <View style={{flex:0.5}}>
-                                    <Text style={{fontSize:14, fontWeight:'bold'}}>{this.state.university}</Text>
-                                    <Text style={{fontSize:14}}>{this.state.year}</Text>
-                                    <Text style={{fontSize:14}}>{this.state.major}</Text>
+                                <View style={{flex:0.9}}>
+                                    <Text style={{fontSize:18, fontWeight:'bold', margin:3}}>{this.state.university}</Text>
+                                    <Text style={{fontSize:18, margin:3}}>{this.state.degree}</Text>
+                                    <Text style={{fontSize:16, margin:3}}>Graduated year : {this.state.year}</Text>
+                                    <Text style={{fontSize:16, margin:3}}>Major : {this.state.major}</Text>
+                                    <Text style={{fontSize:16, margin:3}}>GPA : {this.state.grade}</Text>
                                 </View>
-                                <View style={{flex:0.5, justifyContent:'flex-start', alignItems:'flex-end'}}>
+                                <View style={{flex:0.1, justifyContent:'flex-start', alignItems:'flex-end'}}>
                                     <TouchableOpacity style={{margin:10}}
                                                     onPress={() => this.props.navigation.navigate('Education_Edit')}>
                                         <Image
@@ -116,11 +213,9 @@ export default class Profile_Employee extends React.Component {
                                 </View>
                             </View>
                         </View>
-                        {/*End Education*/}
 
                         <View style={{marginTop:10}}/>
 
-                        {/* Interesting */}
                         <View style={{ backgroundColor:'white', borderWidth:15, borderColor:'transparent'}}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 <Image
@@ -130,18 +225,19 @@ export default class Profile_Employee extends React.Component {
                                 <Text style={{fontSize:20,}}> Interesting </Text>
                             </View>
                             <View style={styles.spaceView}/>
-                            <View style={{flexDirection:'row'}}>
-                                <View style={{flex:0.5}}>
+                            <View style={{flex:1, flexDirection:'row'}}>
+                                <View style={{flex:0.7}}>
 
-                                {/* Flat List Print Interest //////// have to edit //////////// later */}
-                                
-                                <FlatList 
-                                    data = {this.state.interest}
-                                    renderItem={({item}) => <Text>{item.id}</Text>}/>
+                                    <FlatList
+                                        data={this.state.interestTemp}
+                                        keyExtractor={(item, index) => item.id}
+                                        renderItem={({item}) => <Text style={{fontSize:14, margin:5}}>{item.num}. {item.list}</Text>}
+                                        extraData={this.state.re}
+                                        style={{marginTop:10,flex:1}}
+                                    />
 
-                                {/*///////////////////////////////////////////////////////////////////*/}
                                 </View>
-                                <View style={{flex:0.5, justifyContent:'flex-start', alignItems:'flex-end'}}>
+                                <View style={{flex:0.3, justifyContent:'flex-start', alignItems:'flex-end'}}>
                                     <TouchableOpacity style={{margin:10}}
                                                         onPress={() => this.props.navigation.navigate('Interesting_Edit')}>
                                                     
@@ -153,12 +249,9 @@ export default class Profile_Employee extends React.Component {
                                 </View>
                             </View>
                         </View>
-                        {/*End Interesting*/}
                         
                         <View style={{marginTop:10}}/>
 
-
-                        {/* Status */}
                         <View style={{ backgroundColor:'white', borderWidth:15, borderColor:'transparent'}}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 <Image
@@ -178,28 +271,23 @@ export default class Profile_Employee extends React.Component {
                                 <View style={{flex:1}}>
                                     
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize:16}}>Age : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.dataUser.age} </Text>
+                                        <Text style={{fontSize:16, fontWeight:'bold'}}>Age : </Text>
+                                        <Text style={styles.fontStatus}> {this.state.age} </Text>
                                     </View> 
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize:16}}>Sex :</Text>
-                                        <Text style={styles.fontStatus}> {this.state.dataUser.sex} </Text>
+                                        <Text style={{fontSize:16, fontWeight:'bold'}}>Sex :</Text>
+                                        <Text style={styles.fontStatus}> {this.state.sex} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize:16}}>Nationality : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.dataUser.nation} </Text>
+                                        <Text style={{fontSize:16, fontWeight:'bold'}}>Nationality : </Text>
+                                        <Text style={styles.fontStatus}> {this.state.nation} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
                                     <View style={{flexDirection:'row'}}>  
-                                        <Text style={{fontSize:16}}>Religion : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.dataUser.religion} </Text>
-                                    </View>
-                                    <View style={styles.statusLine}/>
-                                    <View style={{flexDirection:'row'}}>  
-                                        <Text style={{fontSize:16}}>Highest Education : </Text>
-                                        <Text style={styles.fontStatus}> {this.state.dataUser.degree} </Text>
+                                        <Text style={{fontSize:16, fontWeight:'bold'}}>Religion : </Text>
+                                        <Text style={styles.fontStatus}> {this.state.religion} </Text>
                                     </View>
                                     <View style={styles.statusLine}/>
 
@@ -207,8 +295,8 @@ export default class Profile_Employee extends React.Component {
                 
                             </View>
                         </View>
-                        {/*End Status*/}
 
+                        <View style={{height:50, backgroundColor:'white'}}/>
 
                     </ScrollView>
                 </View>
@@ -217,7 +305,6 @@ export default class Profile_Employee extends React.Component {
         );
     }
 }
-
 const styles = StyleSheet.create({
     statusLine : {
         borderWidth:0.5,
@@ -228,7 +315,7 @@ const styles = StyleSheet.create({
     },
     fontStatus : {
         fontSize:16, 
-        fontWeight:'bold'
+ 
     },
     purpleBtn : {
         backgroundColor:'#720DBA', 
@@ -244,3 +331,5 @@ const styles = StyleSheet.create({
         margin:20
     }
 })
+
+export default withNavigation(Profile_Employee)

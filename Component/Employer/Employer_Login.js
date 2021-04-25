@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View ,Text,TextInput,Alert, AsyncStorage,Keyboard} from 'react-native';
+import { TouchableOpacity, View ,Text,TextInput,Alert, AsyncStorage,Image} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import { StackActions, NavigationActions } from 'react-navigation';
 import {url} from '../var'
@@ -8,7 +8,7 @@ export default class Employer_Login extends React.Component {
   {
     super(props)
     this.state = {
-      user:'vudtipat@gmail.com',
+      user:'tam1@gmail.com',
       pass:'123456',
       dataUser:{}
     }
@@ -38,13 +38,32 @@ export default class Employer_Login extends React.Component {
       );
       var v3 = await AsyncStorage.getItem('data');
       v3 = JSON.parse(v3);
-      console.log(v3)
       v3 = await AsyncStorage.getItem('email');
-      console.log(v3)
       this.setState({dataUser:v3})
     } catch (error) {
       // Error saving data
     }
+  }
+
+  setToken = async() => {
+    console.log(token)
+    var token = await AsyncStorage.getItem('token')
+    var mode = await AsyncStorage.getItem('mode');
+    var email = await AsyncStorage.getItem('email');
+    console.log('token = '+token)
+    var data = {
+      "email":email,
+      "mode":mode,
+      "token":token
+    }
+    await fetch(url+'/set_Token', {
+      method: 'POST',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
   }
 
   onPress_login = async () => {
@@ -57,12 +76,15 @@ export default class Employer_Login extends React.Component {
           {
             var data = JSON.parse(json.data)
             this._setLogin(data);
-            const resetAction = StackActions.reset({
-              index: 0,
-              actions: [NavigationActions.navigate({ routeName: 'Employer'})],
-            });
-            this.props.navigation.dispatch(resetAction);
-            Alert.alert("เข้าสู่ระบบสำเร็จ");
+            this.setToken()
+            setTimeout(() => {
+              const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Employer'})],
+              });
+              this.props.navigation.dispatch(resetAction);
+              Alert.alert("เข้าสู่ระบบสำเร็จ");
+            }, 500)
           }
           else if(json.response == "Not Pass")
           {
@@ -87,14 +109,20 @@ export default class Employer_Login extends React.Component {
         <View style={{flex: 1,backgroundColor:'#E7E7E7'}}>
           <View style={{flex:0.05}}></View>
           <View style={{flex:0.1,justifyContent:'center'}}>
-          <TouchableOpacity style={{height:40,justifyContent:'center',marginLeft:'2%',backgroundColor:'rgba(0, 153, 255,0.1)',opacity:10,width:'20%',borderRadius:10,flexDirection:'row',alignItems:'center'}} onPress={()=>this.props.navigation.goBack()}>
+          <TouchableOpacity style={{height:40,justifyContent:'center',marginLeft:'2%',width:'20%',borderRadius:10,flexDirection:'row',alignItems:'center'}} onPress={()=>this.props.navigation.goBack()}>
               <AntDesign name="leftcircleo" size={24} color="black" style={{marginLeft:'5%',marginRight:'10%'}}/>
               <Text>Back</Text>
          </TouchableOpacity> 
           </View>
-          <View style={{flex:0.3}}/>  
+          <View style={{flex:0.3, justifyContent:'center', alignItems:'center'}}>
+              <Image 
+                  style={{width:400, height:200}}
+                  source={require("../image/white_logo.png")}
+              />
 
-          <View style={{flex:0.6,backgroundColor:'#E7E7E7',flexDirection:'column',alignItems:'center'}}>
+          </View>
+
+          <View style={{flex:0.5,backgroundColor:'#E7E7E7',flexDirection:'column',alignItems:'center'}}>
             <Text style={{color:'#000000',fontSize:24,fontWeight:'bold',padding:'5%'}}>Employer Sign In</Text>
             <TextInput style={{height: 40, width:'80%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,paddingHorizontal:10,backgroundColor:'#EBEBEB'}} 
                 placeholder="E-mail" placeholderTextColor='#AAAAAA'
@@ -109,25 +137,23 @@ export default class Employer_Login extends React.Component {
               <Text style={{fontSize:14,fontWeight:'bold',color:'#FFFFFF'} }>Login</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{alignItems:'flex-end',justifyContent:'center',height: 40, width:'80%',borderRadius:10 ,paddingHorizontal:10}}
+            <TouchableOpacity style={{alignItems:'flex-end',justifyContent:'center',height: 40, width:'80%',borderRadius:10 ,paddingHorizontal:10, marginTop:10}}
                               onPress={() => this.props.navigation.navigate('Forget_Password',{mode:'Employer'})}>
               <Text style={{fontSize:12,fontWeight:'bold',color:'#636363'}}>Forgot Password</Text>
             </TouchableOpacity>
             
-            <View style={{backgroundColor:'#707070',height:1,width:'100%',marginTop:'10%'}}/>
-            <TouchableOpacity style={{marginTop:5,alignItems:'center',justifyContent:'center',height: 40, width:'80%',borderRadius:10 ,paddingHorizontal:10}}
-                              onPress={() => this.props.navigation.navigate('Create_Account',{mode:'Employer'})}>
-              <Text style={{fontSize:16,fontWeight:'bold',color:'#636363'}}>Create an account? Register</Text>
-            </TouchableOpacity>
-          </View>
-       
+            <View style={{flex:0.3,flexDirection:'column',alignItems:'center', width:'90%', marginTop:30}}>
+              <View style={{backgroundColor:'#707070',height:'2%',width:'100%'}}/>
+
+              <TouchableOpacity style={{marginTop:'5%',alignItems:'center',justifyContent:'center',height: '100%', width:'80%',borderRadius:10 ,paddingHorizontal:10}}
+                                onPress={() => this.props.navigation.navigate('Create_Account',{mode:'Employer'})}>
+                <Text style={{fontSize:16,fontWeight:'bold',color:'#636363'}}>Create an account? Register</Text>
+              </TouchableOpacity>
+            </View>
           
-         
+
+          </View>
         </View>
-        
-
-
-
       );
     }
   }

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Alert } from 'react-native';
-import { AsyncStorage, Picker, TouchableOpacity, View ,Text,TextInput,KeyboardAvoidingView, TouchableWithoutFeedback,Keyboard} from 'react-native';
+import { AsyncStorage, TouchableOpacity, View ,Text,TextInput,KeyboardAvoidingView, TouchableWithoutFeedback,Keyboard} from 'react-native';
 import {url} from '../../var';
+import RNPickerSelect from 'react-native-picker-select';
+import {Picker} from '@react-native-picker/picker';
 
 export default class Status_Edit extends React.Component {
 
@@ -89,14 +91,16 @@ export default class Status_Edit extends React.Component {
             nation: '',
             religion: '',
             degree: '',
-            dataUser:{}
+            dataUser:{},
+            sex_choose: [{label: 'Male', value:'Male'},
+                        {label: 'Female', value:'Female'}]
         };
         this._getData();
         console.log(this.state.dataUser)
     }
     render(){
         return(
-            <View style={{flex:1,}}>
+            <View style={{flex:1, marginTop:32}}>
 
                 <View style={{flex:0.1, justifyContent:'center', backgroundColor:'transparent', alignItems:'center', flexDirection:'row'}}>
                     <TouchableOpacity 
@@ -123,16 +127,17 @@ export default class Status_Edit extends React.Component {
                     </View>
                     <View style={{flexDirection:'row', backgroundColor:'white', height:50, marginTop:10, width:'95%',
                                 borderColor:'#EBEBEB', paddingHorizontal:10, alignItems:'center'}}>
-                       
-                        <Picker 
-                            selectedValue={this.state.sex}
-                            style={{ height: 50, width: '100%' }}
-                            onValueChange={(itemValue, itemIndex) => this.onChangesex(itemValue)}
-                        >
-                            <Picker.Item label="Male" value="Male" />
-                            <Picker.Item label="Female" value="Female" />
-                        </Picker>
-                     
+                       <View style={{flex:1, height:'100%', justifyContent:'center', width:'100%'}}>
+                       <Picker
+                                    selectedValue={this.state.sex}
+                                    style={{flex:1, height: '100%',borderColor: 'white' , backgroundColor:'white'}}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                      this.setState({sex: itemValue})
+                                    }>
+                                    <Picker.Item label="ชาย" value="ชาย" />
+                                    <Picker.Item label="หญิง" value="หญิง" />
+                                  </Picker>
+                        </View>
                     </View>
                     <View style={{flexDirection:'row', backgroundColor:'white', height:50, marginTop:10, width:'95%',
                                 borderColor:'#EBEBEB', paddingHorizontal:10, alignItems:'center'}}>
@@ -143,11 +148,6 @@ export default class Status_Edit extends React.Component {
                                 borderColor:'#EBEBEB', paddingHorizontal:10, alignItems:'center'}}>
                         <TextInput style={{fontSize:18,width:'95%'}}
                             onChangeText={(text) => this.onChangereligion(text)} placeholder="Religion">{this.state.religion}</TextInput>
-                    </View>
-                    <View style={{flexDirection:'row', backgroundColor:'white', height:50, marginTop:10, width:'95%',
-                                borderColor:'#EBEBEB', paddingHorizontal:10, alignItems:'center'}}>
-                        <TextInput style={{fontSize:18,width:'95%'}}
-                            onChangeText={(text) => this.onChangedegree(text)} placeholder="Heighest Education">{this.state.degree}</TextInput>
                     </View>
                 </View>  
  

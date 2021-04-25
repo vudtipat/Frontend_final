@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, View ,Text,TextInput,KeyboardAvoidingView, TouchableWithoutFeedback,Keyboard} from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, View ,Text,TextInput,KeyboardAvoidingView, TouchableWithoutFeedback,Keyboard, Alert} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
-import { ScrollView } from 'react-native-gesture-handler';
-import { Icon  } from 'react-native-elements'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-const Tab = createBottomTabNavigator();
 
 
 export default class Agreement extends React.Component {
@@ -16,6 +11,9 @@ export default class Agreement extends React.Component {
             profit: '2,5000',
             location: 'Si Racha, Chonburi',
         };
+      }
+      pressAgree(){
+          console.log('press Agree')
       }
     render(){
         return(
@@ -41,7 +39,8 @@ export default class Agreement extends React.Component {
                 </View>
                 <View style={{flex:0.2, alignItems:'center'}}>
                     <View style={{margin:5}}>
-                        <TouchableOpacity style={{backgroundColor:'blue', alignItems:'center', height:40, width:100, justifyContent:'center', borderRadius:5}}>
+                        <TouchableOpacity style={{backgroundColor:'blue', alignItems:'center', height:40, width:100, justifyContent:'center', borderRadius:5}}
+                            onPress={() => this.pressAgree()}>
                             <Text style={{fontSize:20, color:'white'}}>Accept</Text>
                         </TouchableOpacity>
                     </View>

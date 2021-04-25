@@ -1,0 +1,152 @@
+import React from 'react';
+import { Alert, Text, View, StatusBar,TextInput,TouchableOpacity,Keyboard,FlatList,Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
+export default class App extends React.Component {
+
+  getChat = async() => {
+    await fetch(this.state.ip+'/chat?want=Name2:Name1', {
+      method: 'GET',
+    }).then((response) => response.json()).then((respone) => {
+        if(respone.response == 'Pass')
+        {
+           var x = JSON.parse(respone.data);
+           this.setState({datarender:x})
+        }
+        else
+        {
+            Alert.alert('กรุณาลองอีกครั้ง!!');
+        }
+    })
+  }
+
+  constructor(props)
+  {
+        super(props);
+        this.state = {
+          name:'Name1',
+          textData:'',
+          ip:'http://192.168.1.34:3000',
+          datarender:[],
+          selectimg:'',
+          type:'txt'
+        }
+        this.getChat()
+
+  }
+
+  componentDidMount() {
+    this._interval = setInterval(() => {
+      this.getChat()
+    }, 1000);
+  }
+  
+  componentWillUnmount() {
+    clearInterval(this._interval);
+  }
+
+  onChangeText = (text) => {
+    this.setState({textData:text})
+  }
+
+  openImagePickerAsync = async () => {
+    let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+    else{
+      let pickerResult = await ImagePicker.launchImageLibraryAsync({base64:true,allowsEditing: true,
+        aspect: [4,3]});
+      if(!pickerResult.cancelled)
+      {
+        let imageUri = pickerResult ? `data:image/jpg;base64,${pickerResult.base64}` : null;
+      //console.log(imageUri);
+      //console.log(pickerResult.uri);
+      this.setState({textData:imageUri}) 
+      this.setState({type:'img'})
+      }
+      
+    }
+    
+  }
+
+  onClick = async() => {
+    console.log("Name1" < "Name2")
+    var data = {
+      u1:'Name1',
+      u2:'Name2',
+      text:this.state.textData,
+      own:this.state.name,
+      type:this.state.type
+    }
+    if(this.state.textData != "")
+    {
+      await fetch(this.state.ip+'/chat', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then((response) => response.json())
+    .then((json) => {
+        if(json.response != "Pass")
+        {
+          Alert.alert("กรุณาลองใหม่อักครั้ง")
+        }
+    })
+      console.log(this.state.textData)
+    }
+    Keyboard.dismiss()
+    this.textInput.clear()
+    this.setState({textData:''})
+    this.setState({type:'txt'})
+  }
+
+  render(){
+    console.disableYellowBox = true;
+    return (
+      <View style={{flex:1,marginTop:StatusBar.currentHeight,backgroundColor:'red',width:'100%'}}>
+        <View style={{backgroundColor:'green',justifyContent:'center',alignItems:'center',width:'100%',height:60}}>
+          <Text style={{fontWeight:'bold',fontSize:20}}>{this.state.name}</Text>
+        </View>
+        <View style={{flex:1,backgroundColor:'blue'}}>
+          <FlatList
+            inverted
+            data={this.state.datarender}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item}) => 
+            item.own == this.state.name ?
+              item.type == 'txt'?
+              <View style={{height: 100, width:'50%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+              paddingHorizontal:10, backgroundColor:'#FFE5EA', alignSelf:'flex-end', margin:10}}>
+                <Text style={{fontSize:20}}>{item.text}</Text>
+                <Text style={{fontSize:15,alignItems:'flex-end'}}>{item.date}</Text>
+              </View>
+              :
+              <Image source={{uri: item.text, scale: 1}} style={{ height: 250, width: 250,paddingHorizontal:10,alignSelf:'flex-end', margin:10}}/>
+              :
+              item.type == 'txt'?
+              <View style={{height: 100, width:'50%',borderColor: 'gray', borderWidth: 1,borderRadius:10 ,
+              paddingHorizontal:10, backgroundColor:'#F5A7F2', alignSelf:'flex-start', margin:10}}>
+                <Text style={{fontSize:20}}>{item.text}</Text>
+                <Text style={{fontSize:15,alignItems:'flex-end'}}>{item.date}</Text>
+              </View> 
+              :
+              <Image source={{uri: item.text, scale: 1}} style={{ height: 100, width: 100,paddingHorizontal:10,alignSelf:'flex-end', margin:10}}/>
+            }
+            style={{marginTop:5,flex:1}}
+          />
+        </View>
+        <View style={{height:50,backgroundColor:'pink',alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
+          <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1 ,width:'70%',borderRadius:10,backgroundColor:'white',
+          paddingHorizontal:10}} onChangeText={Text => this.onChangeText(Text)} ref={input => { this.textInput = input }} value = {this.state.textData}></TextInput>
+          <TouchableOpacity style={{width:40,height:40,backgroundColor:'red',marginLeft:5,borderRadius:100}} onPress={() => this.onClick()}></TouchableOpacity>
+          <TouchableOpacity style={{width:40,height:40,backgroundColor:'red',marginLeft:5,borderRadius:100}} onPress={() => this.openImagePickerAsync()}></TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+}
